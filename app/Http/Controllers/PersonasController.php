@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 
 class PersonasController extends Controller
 {
+
     public function index()
     {
         //pagina de inicio
