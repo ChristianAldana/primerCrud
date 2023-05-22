@@ -49,6 +49,8 @@
                                     </button>
                                 </form>
                             </td>
+
+
                             <td>
                                 <form action="{{ route("personas.show", $item->id) }}" method="GET">
                                     <button class="btn btn-danger btn-sm">

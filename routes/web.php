@@ -4,6 +4,7 @@ use App\Http\Controllers\PersonasController;
 use Illuminate\Support\Facades\Route;
 
 
+
 Route::get('/', [PersonasController::class, 'index'])->name('personas.index');
 Route::get('/create', [PersonasController::class, 'create'])->name('personas.create');
 Route::post('/store', [PersonasController::class, 'store'])->name('personas.store');
