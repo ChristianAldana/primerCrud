@@ -1,6 +1,7 @@
 <?php
 
 namespace App\Http\Controllers;
+use App\Exceptions\TransporteNoAsignadoException;
 
 use App\Models\Camion;
 use Illuminate\Http\Request;
@@ -21,19 +22,37 @@ class CamionController extends Controller
 
     public function storec(Request $request)
     {
-        //Sirve para guardar datos en la base de datos
-        $camiones = new Camion();
-        $camiones->id = $request->post('id');
-        $camiones->placa_camion = $request->post('placa_camion');
-        $camiones->marca = $request->post('marca');
-        $camiones->color = $request->post('color');
-        $camiones->modelo = $request->post('modelo');
-        $camiones->capacidad_toneladas = $request->post('capacidad_toneladas');
-        $camiones->transporte_codigo = $request->post('transporte_codigo');
-        $camiones->save();
+        try {
 
-        return redirect()->route("camiones.indexc")->with("success", "Agregado con exito!");
+
+
+
+            // Si llegamos a este punto, significa que el transporte está asignado
+            $camiones = new Camion();
+            $camiones->id = $request->post('id');
+            $camiones->placa_camion = $request->post('placa_camion');
+            $camiones->marca = $request->post('marca');
+            $camiones->color = $request->post('color');
+            $camiones->modelo = $request->post('modelo');
+            $camiones->capacidad_toneladas = $request->post('capacidad_toneladas');
+            $camiones->transporte_codigo = $request->post('transporte_codigo');
+            $camiones->save();
+
+                } catch (\Exception $exception) {
+            $message= " Excepción general ". $exception->getMessage();
+            return view('exceptions.exceptions', compact('message'));
+            }catch (QueryException $queryException){
+                $message= " Excepción de SQL ". $queryException->getMessage();
+                return view('errors.404', compact('message'));
+            }catch (ModelNotFoundException $modelNotFoundException){
+                $message=" Excepción del Sistema ".$modelNotFoundException->getMessage();
+                return view('errors.404', compact('message'));
+            }
+
+            return redirect()->route("camiones.indexc")->with("success", "Agregado con éxito!");
+
     }
+
 
     public function showc($id)
     {

@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Transporte;
 use Illuminate\Http\Request;
+use App\Exceptions\DatosInvalidosException;
 
 class TransporteController extends Controller
 {
@@ -21,18 +22,38 @@ class TransporteController extends Controller
         return view('agregar-transporte');
     }
 
+
     public function storet(Request $request)
     {
-        //Sirve para guardar datos en la base de datos
-        $transportes = new Transporte();
-        $transportes->id = $request->post('id');
-        $transportes->nombre = $request->post('nombre');
-        $transportes->razon_social = $request->post('razon_social');
-//        $transportes->fecha = $request->post('fecha');
-        $transportes->save();
+        try {
 
-        return redirect()->route("transportes.indext")->with("success", "Agregado con exito!");
+
+
+            // Sirve para guardar datos en la base de datos
+            $transportes = new Transporte();
+            $transportes->id = $request->post('id');
+            $transportes->nombre = $request->post('nombre');
+            $transportes->razon_social = $request->post('razon_social');
+            // $transportes->fecha = $request->post('fecha');
+            $transportes->save();
+
+        } catch (\Exception $exception) {
+            $message= " Excepción general ". $exception->getMessage();
+            return view('exceptions.exceptions', compact('message'));
+        }catch (QueryException $queryException){
+            $message= " Excepción de SQL ". $queryException->getMessage();
+            return view('errors.404', compact('message'));
+        }catch (ModelNotFoundException $modelNotFoundException){
+            $message=" Excepción del Sistema ".$modelNotFoundException->getMessage();
+            return view('errors.404', compact('message'));
+        }
+
+        return redirect()->route("transportes.indext")->with("success", "Agregado con éxito!");
+
+
     }
+
+
 
     public function showt($id)
     {

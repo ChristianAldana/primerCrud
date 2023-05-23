@@ -1,6 +1,7 @@
 <?php
 
 namespace App\Http\Controllers;
+use App\Exceptions\DatosInvalidosException;
 
 use App\Models\Personas;
 use Illuminate\Http\Request;
@@ -24,15 +25,30 @@ class PersonasController extends Controller
 
     public function store(Request $request)
     {
-        //sirve para guardar datos en la bd
-        $personas = new Personas();
-        $personas->paterno = $request->post('paterno');
-        $personas->materno = $request->post('materno');
-        $personas->nombre = $request->post('nombre');
-        $personas->fecha_nacimiento = $request->post('fecha_nacimiento');
-        $personas->save();
+        try {
 
-        return redirect()->route("personas.index")->with("success", "Agregado con exito!");
+            //sirve para guardar datos en la bd
+            $personas = new Personas();
+            $personas->paterno = $request->post('paterno');
+            $personas->materno = $request->post('materno');
+            $personas->nombre = $request->post('nombre');
+            $personas->fecha_nacimiento = $request->post('fecha_nacimiento');
+            $personas->save();
+
+
+        } catch (\Exception $exception) {
+            $message= " Excepción general ". $exception->getMessage();
+            return view('exceptions.exceptions', compact('message'));
+        }catch (QueryException $queryException){
+            $message= " Excepción de SQL ". $queryException->getMessage();
+            return view('errors.404', compact('message'));
+        }catch (ModelNotFoundException $modelNotFoundException){
+            $message=" Excepción del Sistema ".$modelNotFoundException->getMessage();
+            return view('errors.404', compact('message'));
+        }
+
+        return redirect()->route("personas.index")->with("success", "Agregado con éxito!");
+
     }
 
     public function show($id)

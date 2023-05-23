@@ -43,5 +43,11 @@
 
         </div>
     </div>
+
+@endsection
+
+{{--se hace la conexion con js--}}
+
+@section ('js')
 @endsection
 
